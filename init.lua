@@ -13,14 +13,42 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- general settings
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2      -- display width of a tab
+vim.opt.shiftwidth = 2    -- spaces used for auto-indent
+vim.opt.softtabstop = 2   -- spaces used when pressing <Tab>
 vim.opt.expandtab = true
 vim.opt.number = true
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
 vim.opt.guifont = "JetBrainsMono Nerd Font:h10"
 vim.opt.signcolumn = "yes"
+vim.opt.whichwrap:append('<,>')
+
+
+-- Insert-mode line wrapping without inserting characters
+vim.keymap.set('i', '<Left>', function()
+  if vim.fn.col('.') == 1 then
+    -- move to previous line end safely
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>gkA', true, false, true), 'n', true)
+    return ''
+  else
+    return '<Left>'
+  end
+end, {expr = true, noremap = true})
+
+vim.keymap.set('i', '<Right>', function()
+  local col = vim.fn.col('.')
+  local line_len = vim.fn.col('$') - 1
+  if col > line_len then
+    -- move to next line start safely
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>gjI', true, false, true), 'n', true)
+    return ''
+  else
+    return '<Right>'
+  end
+end, {expr = true, noremap = true})
+
+
 
 -- setup plugins
 require("lazy").setup({
@@ -39,13 +67,13 @@ require("lazy").setup({
   { "nvim-lualine/lualine.nvim" },
   { "junegunn/fzf.vim" },
   { "glepnir/dashboard-nvim" },
-  { "echasnovski/mini.nvim" },
-  { "lukas-reineke/indent-blankline.nvim", version = "v2" },
+  { "echasnovski/mini.nvim" }, 
   { "sbdchd/neoformat" },
   { "mhinz/vim-signify" },
   { "norcalli/nvim-colorizer.lua" },
   { "folke/which-key.nvim" },
   { "ThePrimeagen/harpoon" },
+  {"lukas-reineke/indent-blankline.nvim"},
 
   -- File explorer
   {
@@ -94,15 +122,6 @@ require("lazy").setup({
 
 })
 
--- indent guides
-require("indent_blankline").setup {
-  char = "│",
-  space_char = "·",
-  show_end_of_line = true,
-  show_trailing_blankline_indent = true,
-  show_first_indent_level = true,
-}
-
 -- comments
 require('nvim_comment').setup({
   marker_padding = true,
@@ -150,6 +169,16 @@ require("lualine").setup({
     },
   },
 })
+
+require("indent_blankline").setup({
+  char = "│",             -- the vertical line
+  space_char_blankline = " ", -- optional: don't show lines in empty spaces
+  show_trailing_blankline_indent = false,
+  show_first_indent_level = true,
+  use_treesitter = true,  -- integrate with Treesitter for more accuracy
+  filetype_exclude = {"help", "dashboard", "NvimTree"},
+})
+
 
 -- which-key setup
 require("which-key").setup({
@@ -271,25 +300,24 @@ local function smooth_to_line(target_line, duration_ms)
   local steps = math.min(math.abs(distance), max_steps)
   local delta = distance / steps
   local interval = duration_ms / steps
-  local mode = vim.fn.mode()
-  local visual_start = nil
-
-  if mode == "v" or mode == "V" or mode == "\22" then
-    visual_start = vim.fn.getpos("v")[2]
-  end
 
   for i = 1, steps do
     vim.defer_fn(function()
       if not is_smooth_scrolling then return end
 
-      local new_line = math.floor(start_line + delta * i + 0.5)
-      if i == steps then new_line = target_line end
-      new_line = math.max(1, math.min(new_line, buf_last))
+      local new_line
+      if i == steps then
+        new_line = target_line  -- guarantee exact final line
+      else
+        new_line = math.floor(start_line + delta * i + 0.5)
+      end
 
       local cursor_col = math.min(vim.fn.col("$") - 1, vim.fn.col(".") - 1)
       pcall(vim.api.nvim_win_set_cursor, 0, {new_line, cursor_col})
-      if visual_start then pcall(vim.cmd, "normal! gv") end
-      if i == steps then vim.defer_fn(function() is_smooth_scrolling = false end, 50) end
+
+      if i == steps then
+        vim.defer_fn(function() is_smooth_scrolling = false end, 50)
+      end
     end, interval * i)
   end
 end
@@ -351,5 +379,8 @@ vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "BufWritePost" }, {
     end)
   end,
 })
-
-pcall(vim.treesitter.start, 0)
+vim.api.nvim_create_autocmd("BufReadPost", {
+  callback = function()
+    pcall(vim.treesitter.start, 0)
+  end,
+})
