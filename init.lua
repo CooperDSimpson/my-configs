@@ -13,9 +13,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- general settings
-vim.opt.tabstop = 2      -- display width of a tab
-vim.opt.shiftwidth = 2    -- spaces used for auto-indent
-vim.opt.softtabstop = 2   -- spaces used when pressing <Tab>
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 vim.opt.number = true
 vim.opt.termguicolors = true
@@ -24,11 +24,9 @@ vim.opt.guifont = "JetBrainsMono Nerd Font:h10"
 vim.opt.signcolumn = "yes"
 vim.opt.whichwrap:append('<,>')
 
-
 -- Insert-mode line wrapping without inserting characters
 vim.keymap.set('i', '<Left>', function()
   if vim.fn.col('.') == 1 then
-    -- move to previous line end safely
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>gkA', true, false, true), 'n', true)
     return ''
   else
@@ -40,7 +38,6 @@ vim.keymap.set('i', '<Right>', function()
   local col = vim.fn.col('.')
   local line_len = vim.fn.col('$') - 1
   if col > line_len then
-    -- move to next line start safely
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>gjI', true, false, true), 'n', true)
     return ''
   else
@@ -48,13 +45,9 @@ vim.keymap.set('i', '<Right>', function()
   end
 end, {expr = true, noremap = true})
 
-
-
 -- setup plugins
 require("lazy").setup({
   -- LSP & completion
-  {"github/copilot.vim"},
-  { "zbirenbaum/copilot-cmp", dependencies = { "github/copilot.vim" } },
   { "neovim/nvim-lspconfig" },
   { "hrsh7th/nvim-cmp" },
   { "hrsh7th/cmp-nvim-lsp" },
@@ -73,7 +66,7 @@ require("lazy").setup({
   { "norcalli/nvim-colorizer.lua" },
   { "folke/which-key.nvim" },
   { "ThePrimeagen/harpoon" },
-  {"lukas-reineke/indent-blankline.nvim"},
+  { "lukas-reineke/indent-blankline.nvim" },
 
   -- File explorer
   {
@@ -104,22 +97,19 @@ require("lazy").setup({
   },
 
   -- Treesitter
-{
-  "nvim-treesitter/nvim-treesitter",
-  build = ":TSUpdate",
-  config = function()
-    require("nvim-treesitter.configs").setup({
-      ensure_installed = { "c", "cpp", "lua", "python", "javascript", "java", "html", "xml", "asm" }, 
-      indent = { enable = true }, -- optional: keep indentation
-      incremental_selection = { enable = false }, -- optional
-      textobjects = { enable = true }, -- optional
-      playground = { enable = true }, -- optional
-    })
-  end,
-}
-
-
-
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "c", "cpp", "lua", "python", "javascript", "java", "html", "xml", "asm" }, 
+        indent = { enable = true },
+        incremental_selection = { enable = false },
+        textobjects = { enable = true },
+        playground = { enable = true },
+      })
+    end,
+  }
 })
 
 -- comments
@@ -171,14 +161,13 @@ require("lualine").setup({
 })
 
 require("indent_blankline").setup({
-  char = "│",             -- the vertical line
-  space_char_blankline = " ", -- optional: don't show lines in empty spaces
+  char = "│",
+  space_char_blankline = " ",
   show_trailing_blankline_indent = false,
   show_first_indent_level = true,
-  use_treesitter = true,  -- integrate with Treesitter for more accuracy
+  use_treesitter = true,
   filetype_exclude = {"help", "dashboard", "NvimTree"},
 })
-
 
 -- which-key setup
 require("which-key").setup({
@@ -192,6 +181,10 @@ local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 lspconfig.clangd.setup({
+  cmd = {
+    "clangd",
+    "--query-driver=" .. "C:/path/to/mingw64/bin/x86_64-w64-mingw32-g++.exe"
+  },
   capabilities = cmp_nvim_lsp.default_capabilities(),
   on_attach = function(client, _)
     if client.server_capabilities.semanticTokensProvider then
@@ -199,7 +192,7 @@ lspconfig.clangd.setup({
     end
   end,
 })
--- Python LSP (pyright)
+
 lspconfig.pyright.setup({
   capabilities = cmp_nvim_lsp.default_capabilities(),
   on_attach = function(client, _)
@@ -281,7 +274,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 -- Smooth scroll
 local is_smooth_scrolling = false
-
 local function smooth_to_line(target_line, duration_ms)
   if is_smooth_scrolling then return end
   is_smooth_scrolling = true
@@ -307,7 +299,7 @@ local function smooth_to_line(target_line, duration_ms)
 
       local new_line
       if i == steps then
-        new_line = target_line  -- guarantee exact final line
+        new_line = target_line
       else
         new_line = math.floor(start_line + delta * i + 0.5)
       end
@@ -327,17 +319,6 @@ vim.keymap.set("n", "G", function() smooth_to_line(vim.fn.line("$"), 200) end, {
 vim.keymap.set("x", "gg", function() smooth_to_line(1, 200) end, { noremap = true, silent = true })
 vim.keymap.set("x", "G", function() smooth_to_line(vim.fn.line("$"), 200) end, { noremap = true, silent = true })
 
--- Copilot settings
-vim.g.copilot_no_tab_map = true
-vim.g.copilot_assume_mapped = true
-vim.g.copilot_tab_fallback = ""
-
-vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
-vim.api.nvim_set_keymap("i", "<C-K>", 'copilot#Dismiss()', { silent = true, expr = true })
-
-vim.g.copilot_enabled = true
-vim.g.copilot_filetypes = { ["*"] = true, markdown = false }
-
 -- Theme
 vim.cmd("colorscheme github_dark_high_contrast")
 
@@ -345,21 +326,19 @@ vim.cmd("colorscheme github_dark_high_contrast")
 local function is_significant_change()
   local mode = vim.fn.mode()
   if mode == "i" or mode == "R" then
-    -- In insert/replace mode, check if more than one char will change
     local col = vim.fn.col(".")
     local line = vim.fn.getline(".")
     if col > #line then
-      return false -- nothing to delete
+      return false
     end
-    -- Only disable if there is a selection or multiple chars affected
     local sel = vim.fn.getpos("v")
     if sel[2] ~= sel[3] then
       return true
     else
-      return false -- single char, skip disabling
+      return false
     end
   end
-  return true -- other modes, treat as significant
+  return true
 end
 
 -- Disable Tree-sitter for significant changes
@@ -384,3 +363,4 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
