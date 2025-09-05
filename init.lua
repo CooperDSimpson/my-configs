@@ -69,11 +69,6 @@ require("lazy").setup({
   { "lukas-reineke/indent-blankline.nvim" },
 
   -- File explorer
-  {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" }
-  },
-  { "nvim-tree/nvim-web-devicons" },
   { "terrortylor/nvim-comment" },
 
   -- Fuzzy finder
@@ -118,33 +113,6 @@ require('nvim_comment').setup({
   comment_empty = false,
   create_mappings = false,
   comment_string = '//',
-})
-
--- nvim-tree setup
-require("nvim-tree").setup({
-  renderer = {
-    icons = {
-      show = {
-        file = true,
-        folder = true,
-        folder_arrow = true,
-        git = true,
-      },
-    },
-    group_empty = true,
-  },
-  view = {
-    width = 30,
-    side = 'right'
-  },
-  filters = {
-    dotfiles = false
-  },
-  actions = {
-    open_file = {
-      quit_on_open = true
-    }
-  },
 })
 
 -- lualine setup
@@ -238,26 +206,7 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { noremap = true, silent = true })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { noremap = true, silent = true })
-vim.keymap.set("n", "e", vim.diagnostic.open_float, { noremap = true, silent = true })
 
--- Telescope keymaps
-vim.keymap.set('n', 'ff', ":Telescope find_files<CR>", { noremap = true, silent = true })
-vim.keymap.set('n', 'fg', ":Telescope live_grep<CR>", { noremap = true, silent = true })
-vim.keymap.set('n', 'fb', ":Telescope buffers<CR>", { noremap = true, silent = true })
-vim.keymap.set('n', 'fh', ":Telescope help_tags<CR>", { noremap = true, silent = true })
-
--- Cycle nvim-tree keymap
-local commands = { "NvimTreeToggle" }
-local command_index = 1
-
-function CycleCommands()
-  vim.cmd(commands[command_index])
-  command_index = (command_index % #commands) + 1
-end
-
-vim.keymap.set("n", "<C-n>", ":lua CycleCommands()<CR>", { noremap = true, silent = true })
 
 -- Auto format on save for non-clangd LSPs
 vim.api.nvim_create_autocmd("BufWritePre", {
