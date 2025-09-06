@@ -21,29 +21,10 @@ vim.opt.number = true
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
 vim.opt.guifont = "JetBrainsMono Nerd Font:h10"
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "auto"
+vim.opt.numberwidth = 1
 vim.opt.whichwrap:append('<,>')
-
--- Insert-mode line wrapping without inserting characters
-vim.keymap.set('i', '<Left>', function()
-  if vim.fn.col('.') == 1 then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>gkA', true, false, true), 'n', true)
-    return ''
-  else
-    return '<Left>'
-  end
-end, {expr = true, noremap = true})
-
-vim.keymap.set('i', '<Right>', function()
-  local col = vim.fn.col('.')
-  local line_len = vim.fn.col('$') - 1
-  if col > line_len then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>gjI', true, false, true), 'n', true)
-    return ''
-  else
-    return '<Right>'
-  end
-end, {expr = true, noremap = true})
+vim.opt.relativenumber = false -- optional: if you want absolute numbers
 
 -- setup plugins
 require("lazy").setup({
@@ -66,9 +47,8 @@ require("lazy").setup({
   { "norcalli/nvim-colorizer.lua" },
   { "folke/which-key.nvim" },
   { "ThePrimeagen/harpoon" },
-  {
-  "lukas-reineke/indent-blankline.nvim"  },
-
+  {"lukas-reineke/indent-blankline.nvim"  },
+  { "mbbill/undotree" },
   -- File explorer
   { "terrortylor/nvim-comment" },
 
@@ -107,6 +87,7 @@ require("lazy").setup({
     end,
   }
 })
+
 
 -- comments
 require('nvim_comment').setup({
@@ -258,10 +239,14 @@ local function smooth_to_line(target_line, duration_ms)
   end
 end
 
-vim.keymap.set("n", "gg", function() smooth_to_line(1, 200) end, { noremap = true, silent = true })
-vim.keymap.set("n", "G", function() smooth_to_line(vim.fn.line("$"), 200) end, { noremap = true, silent = true })
-vim.keymap.set("x", "gg", function() smooth_to_line(1, 200) end, { noremap = true, silent = true })
-vim.keymap.set("x", "G", function() smooth_to_line(vim.fn.line("$"), 200) end, { noremap = true, silent = true })
+--smooth to line gg and GG scrolling
+
+vim.keymap.set("n", "gg", function() smooth_to_line(1, 100) end, { noremap = true, silent = true })
+vim.keymap.set("n", "G", function() smooth_to_line(vim.fn.line("$"), 100) end, { noremap = true, silent = true })
+vim.keymap.set("x", "gg", function() smooth_to_line(1, 100) end, { noremap = true, silent = true })
+vim.keymap.set("x", "G", function() smooth_to_line(vim.fn.line("$"), 100) end, { noremap = true, silent = true })
+
+
 
 -- Theme
 vim.cmd("colorscheme github_dark_high_contrast")
@@ -285,7 +270,9 @@ local function is_significant_change()
   return true
 end
 
--- Disable Tree-sitter for significant changes
+
+
+--Disable Tree-sitter for significant changes (required for smooth to line)
 vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI"}, {
   callback = function()
     if is_significant_change() then
