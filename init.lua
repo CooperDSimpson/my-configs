@@ -66,7 +66,8 @@ require("lazy").setup({
   { "norcalli/nvim-colorizer.lua" },
   { "folke/which-key.nvim" },
   { "ThePrimeagen/harpoon" },
-  { "lukas-reineke/indent-blankline.nvim" },
+  {
+  "lukas-reineke/indent-blankline.nvim"  },
 
   -- File explorer
   { "terrortylor/nvim-comment" },
@@ -128,13 +129,7 @@ require("lualine").setup({
   },
 })
 
-require("indent_blankline").setup({
-  char = "│",
-  space_char_blankline = " ",
-  show_trailing_blankline_indent = false,
-  show_first_indent_level = true,
-  use_treesitter = true,
-  filetype_exclude = {"help", "dashboard", "NvimTree"},
+require("ibl").setup({
 })
 
 -- which-key setup
