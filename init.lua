@@ -48,7 +48,7 @@ require("lazy").setup({
   { "folke/which-key.nvim" },
   { "ThePrimeagen/harpoon" },
   {"lukas-reineke/indent-blankline.nvim"  },
-  { "mbbill/undotree" },
+
   -- File explorer
   { "terrortylor/nvim-comment" },
 
@@ -294,4 +294,3 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
-
