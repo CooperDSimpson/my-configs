@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-
+echo goofy
 REM Check for argument
 if "%~1"=="" (
     echo Usage: %~nx0 [-a ^| -n]
@@ -135,4 +135,5 @@ echo MSYS2 environment setup complete!
 :end
 echo done.
 exit /b 0
+
 
