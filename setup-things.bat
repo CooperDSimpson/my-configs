@@ -1,14 +1,20 @@
+
 @echo off
 setlocal enabledelayedexpansion
 echo goofy
 REM Check for argument
 if "%~1"=="" (
-    echo Usage: %~nx0 [-a ^| -n]
+    echo Usage: %~nx0 [-a ^| -n ^| -u]
     echo.
     echo   -a    Run all installations and update Neovim config
     echo   -n    Update only Neovim config
+    echo   -u    Update this script from the remote repository
     exit /b 1
 )
+
+REM Define repo variables (used in multiple places)
+set REPO_URL=https://github.com/CooperDSimpson/my-configs.git
+set LOCAL_REPO_DIR=%USERPROFILE%\my-configs
 
 REM Handle -a argument: do everything
 if /I "%~1"=="-a" goto do_all
@@ -16,8 +22,11 @@ if /I "%~1"=="-a" goto do_all
 REM Handle -n argument: update only Neovim config
 if /I "%~1"=="-n" goto do_nvim
 
+REM Handle -u argument: update this script
+if /I "%~1"=="-u" goto do_update_script
+
 echo Unknown argument: %1
-echo Usage: %~nx0 [-a ^| -n]
+echo Usage: %~nx0 [-a ^| -n ^| -u]
 exit /b 1
 
 
@@ -53,8 +62,6 @@ goto do_nvim_update
 
 :do_nvim_update
 REM Define paths
-set REPO_URL=https://github.com/CooperDSimpson/my-configs.git
-set LOCAL_REPO_DIR=%USERPROFILE%\my-configs
 set NVIM_CONFIG_DIR=%LOCALAPPDATA%\nvim
 set DEST_FILE=%NVIM_CONFIG_DIR%\init.lua
 set CLANGD_DEST=C:\.clangd
@@ -72,7 +79,7 @@ if not exist "%LOCAL_REPO_DIR%\.git" (
     echo Cloning my-configs repo...
     git clone %REPO_URL% "%LOCAL_REPO_DIR%"
 ) else (
-    echo NVIM-config repo already exists, pulling latest changes...
+    echo my-configs repo already exists, pulling latest changes...
     cd "%LOCAL_REPO_DIR%"
     git pull
 )
@@ -132,8 +139,40 @@ echo Installing extra mingw64 packages...
 
 echo MSYS2 environment setup complete!
 
+goto end
+
+
+:do_update_script
+echo Updating this script from the remote repository...
+
+REM Check if git is installed
+git --version >nul 2>&1
+if errorlevel 1 (
+    echo Git is not installed or not in PATH. Please install Git first.
+    pause
+    exit /b 1
+)
+
+REM Clone repo if it doesn't exist
+if not exist "%LOCAL_REPO_DIR%\.git" (
+    echo Cloning my-configs repo...
+    git clone %REPO_URL% "%LOCAL_REPO_DIR%"
+) else (
+    echo my-configs repo already exists, pulling latest changes...
+    cd "%LOCAL_REPO_DIR%"
+    git pull
+)
+
+REM Copy setup-things.bat from repo to current script's directory
+set SCRIPT_DIR=%~dp0
+echo Copying setup-things.bat to %SCRIPT_DIR%
+copy /Y "%LOCAL_REPO_DIR%\setup-things.bat" "%SCRIPT_DIR%"
+
+echo Update complete. Please rerun the updated script if needed.
+
+goto end
+
+
 :end
 echo done.
 exit /b 0
-
-
