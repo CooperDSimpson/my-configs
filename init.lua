@@ -120,6 +120,14 @@ require("which-key").setup({
   layout = { align = "center", height = { min = 4, max = 10 }, width = { min = 20, max = 50 }, spacing = 10 },
 })
 
+require("github-theme").setup({
+  options = {
+    -- You can tweak here
+    transparent = false,
+    terminal_colors = true,
+  }
+})
+
 -- LSP setup
 local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -294,5 +302,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
