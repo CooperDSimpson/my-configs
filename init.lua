@@ -128,6 +128,22 @@ require("github-theme").setup({
   }
 })
 
+{
+  "projekt0n/github-nvim-theme",
+  lazy = false, -- load immediately so the colorscheme is available
+  priority = 1000, -- make sure it loads before other UI plugins
+  config = function()
+    require("github-theme").setup({
+      options = {
+        transparent = false,
+        terminal_colors = true,
+      },
+    })
+    vim.cmd("colorscheme github_dark_high_contrast")
+  end,
+},
+
+
 -- LSP setup
 local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -257,7 +273,7 @@ vim.keymap.set("x", "G", function() smooth_to_line(vim.fn.line("$"), 100) end, {
 
 
 -- Theme
-vim.cmd("colorscheme github_dark_high_contrast")
+--vim.cmd("colorscheme github_dark_high_contrast")
 
 -- Helper function to check if a change is significant
 local function is_significant_change()
@@ -302,6 +318,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
