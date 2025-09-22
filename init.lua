@@ -221,55 +221,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end
 })
 
--- Smooth scroll
-local is_smooth_scrolling = false
-local function smooth_to_line(target_line, duration_ms)
-  if is_smooth_scrolling then return end
-  is_smooth_scrolling = true
-
-  local start_line = vim.fn.line(".")
-  local buf_last = vim.fn.line("$")
-  target_line = math.max(1, math.min(target_line, buf_last))
-  local distance = target_line - start_line
-
-  if distance == 0 then
-    is_smooth_scrolling = false
-    return
-  end
-
-  local max_steps = 100
-  local steps = math.min(math.abs(distance), max_steps)
-  local delta = distance / steps
-  local interval = duration_ms / steps
-
-  for i = 1, steps do
-    vim.defer_fn(function()
-      if not is_smooth_scrolling then return end
-
-      local new_line
-      if i == steps then
-        new_line = target_line
-      else
-        new_line = math.floor(start_line + delta * i + 0.5)
-      end
-
-      local cursor_col = math.min(vim.fn.col("$") - 1, vim.fn.col(".") - 1)
-      pcall(vim.api.nvim_win_set_cursor, 0, {new_line, cursor_col})
-
-      if i == steps then
-        vim.defer_fn(function() is_smooth_scrolling = false end, 50)
-      end
-    end, interval * i)
-  end
-end
-
---smooth to line gg and GG scrolling
-
-vim.keymap.set("n", "gg", function() smooth_to_line(1, 100) end, { noremap = true, silent = true })
-vim.keymap.set("n", "G", function() smooth_to_line(vim.fn.line("$"), 100) end, { noremap = true, silent = true })
-vim.keymap.set("x", "gg", function() smooth_to_line(1, 100) end, { noremap = true, silent = true })
-vim.keymap.set("x", "G", function() smooth_to_line(vim.fn.line("$"), 100) end, { noremap = true, silent = true })
-
 
 
 
@@ -316,6 +267,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
