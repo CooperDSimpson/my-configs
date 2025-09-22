@@ -12,8 +12,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-set nowrap
-
 -- general settings
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -27,6 +25,8 @@ vim.opt.signcolumn = "auto"
 vim.opt.numberwidth = 1
 vim.opt.whichwrap:append('<,>')
 vim.opt.relativenumber = false -- optional: if you want absolute numbers
+
+vim.o.wrap = false
 
 -- setup plugins
 require("lazy").setup({
@@ -269,6 +269,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
