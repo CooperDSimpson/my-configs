@@ -12,6 +12,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+set nowrap
+
 -- general settings
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -267,6 +269,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
