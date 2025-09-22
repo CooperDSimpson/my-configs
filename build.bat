@@ -2,10 +2,10 @@
 setlocal enabledelayedexpansion
 
 :: === Config paths (adjust to where you unzipped) ===
-set GLFW_INC="C:\glfw-3.4.bin.WIN64\include"
-set GLFW_LIB="C:\glfw-3.4.bin.WIN64\lib-mingw-w64"
-set GLEW_INC="C:\glew-2.1.0\include"
-set GLEW_LIB="C:\glew-2.1.0\lib\Release\x64"
+set GLFW_INC="C:\glfw\include"
+set GLFW_LIB="C:\glfw\lib-mingw-w64"
+set GLEW_INC="C:\glew\include"
+set GLEW_LIB="C:\glew\lib\Release\x64"
 
 :: === Common compiler/linker flags ===
 set CFLAGS=-I%GLFW_INC% -I%GLEW_INC%
