@@ -2,13 +2,10 @@ CompileFlags:
   Add:
     - --target=x86_64-w64-mingw32
     - --gcc-toolchain=C:/mingw-w64/mingw64
-    - -I C:/mingw-w64/mingw64/include
-    - -I C:/mingw-w64/mingw64/include/c++/15.2.0
-    - -I C:/mingw-w64/mingw64/include/c++/15.2.0/x86_64-w64-mingw32
-    - -I C:/mingw-w64/mingw64/include/c++/15.2.0/backward
-
-    - -I C:/glfw/include
-    - -I C:/glew/include
-
-
+    - -IC:/mingw-w64/mingw64/include
+    - -IC:/mingw-w64/mingw64/include/c++/15.2.0
+    - -IC:/mingw-w64/mingw64/include/c++/15.2.0/x86_64-w64-mingw32
+    - -IC:/mingw-w64/mingw64/include/c++/15.2.0/backward
+    - -IC:/glfw/include
+    - -IC:/glew/include
 
