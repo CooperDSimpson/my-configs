@@ -104,14 +104,6 @@ require("lazy").setup({
 })
 
 
--- comments
-require('nvim_comment').setup({
-  marker_padding = true,
-  comment_empty = false,
-  create_mappings = false,
-  comment_string = '//',
-})
-
 -- lualine setup
 require("lualine").setup({
   sections = {
@@ -126,13 +118,6 @@ require("lualine").setup({
 })
 
 require("ibl").setup({
-})
-
--- which-key setup
-require("which-key").setup({
-  plugins = { marks = true, registers = true },
-  win = { border = "single", position = "bottom" },
-  layout = { align = "center", height = { min = 4, max = 10 }, width = { min = 20, max = 50 }, spacing = 10 },
 })
 
 require("github-theme").setup({
@@ -269,6 +254,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
