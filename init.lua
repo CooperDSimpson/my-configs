@@ -129,7 +129,7 @@ require("github-theme").setup({
 -- In your Neovim config
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "html" }, -- auto-install HTML LSP
+  ensure_installed = { "html" , "pyright" , "clangd"}, -- auto-install HTML LSP
 })
 
 -- LSP setup
@@ -273,6 +273,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
