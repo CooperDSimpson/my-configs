@@ -157,6 +157,29 @@ lspconfig.pyright.setup({
   end,
 })
 
+lspconfig.html.setup {
+  cmd = { "vscode-html-language-server", "--stdio" },
+  filetypes = { "html" },
+  init_options = {
+    configurationSection = { "html", "css", "javascript" },
+    embeddedLanguages = {
+      css = true,
+      javascript = true,
+    },
+    provideFormatter = true,
+  },
+  settings = {
+    html = {
+      format = {
+        wrapLineLength = 140,
+        /* other format settings if you like */
+      }
+    }
+  },
+  capabilities = capabilities,
+  single_file_support = true,
+}
+
 -- nvim-cmp setup
 local cmp = require("cmp")
 cmp.setup({
@@ -254,6 +277,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
