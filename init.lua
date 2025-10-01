@@ -39,7 +39,6 @@ require("lazy").setup({
   { "hrsh7th/cmp-path" },
   { "saadparwaiz1/cmp_luasnip" },
   { "l3mon4d3/luasnip" },
-  {}
 
   -- UI & utilities
   { "nvim-lualine/lualine.nvim" },
@@ -281,6 +280,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
