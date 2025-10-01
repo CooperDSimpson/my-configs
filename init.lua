@@ -23,9 +23,8 @@ vim.opt.background = "dark"
 vim.opt.guifont = "JetBrainsMono Nerd Font:h10"
 vim.opt.signcolumn = "auto"
 vim.opt.numberwidth = 1
-vim.opt.whichwrap:append('<,>')
+vim.opt.whichwrap:append("<,>")
 vim.opt.relativenumber = false -- optional: if you want absolute numbers
-
 vim.o.wrap = false
 
 -- setup plugins
@@ -50,32 +49,32 @@ require("lazy").setup({
   { "norcalli/nvim-colorizer.lua" },
   { "folke/which-key.nvim" },
   { "ThePrimeagen/harpoon" },
-  {"lukas-reineke/indent-blankline.nvim"  },
+  { "lukas-reineke/indent-blankline.nvim" },
 
-  -- File explorer
+  -- File explorer / commenting
   { "terrortylor/nvim-comment" },
 
   -- Fuzzy finder
   {
     "nvim-telescope/telescope.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" }
+    dependencies = { "nvim-lua/plenary.nvim" },
   },
 
   -- Theme & syntax
   {
-  "projekt0n/github-nvim-theme",
-  lazy = false, -- load immediately so the colorscheme is available
-  priority = 1000, -- make sure it loads before other UI plugins
-  config = function()
-    require("github-theme").setup({
-      options = {
-        transparent = false,
-        terminal_colors = true,
-      },
-    })
-    vim.cmd("colorscheme github_dark_high_contrast")
-  end,
-},
+    "projekt0n/github-nvim-theme",
+    lazy = false, -- load immediately so the colorscheme is available
+    priority = 1000, -- make sure it loads before other UI plugins
+    config = function()
+      require("github-theme").setup({
+        options = {
+          transparent = false,
+          terminal_colors = true,
+        },
+      })
+      vim.cmd("colorscheme github_dark_high_contrast")
+    end,
+  },
 
   -- Autopairs
   {
@@ -101,9 +100,8 @@ require("lazy").setup({
         playground = { enable = true },
       })
     end,
-  }
+  },
 })
-
 
 -- lualine setup
 require("lualine").setup({
@@ -112,21 +110,19 @@ require("lualine").setup({
       "filename",
       {
         "diagnostics",
-        sources = { "nvim_lsp" }
+        sources = { "nvim_lsp" },
       },
     },
   },
 })
 
-require("ibl").setup({
-})
+require("ibl").setup({})
 
 require("github-theme").setup({
   options = {
-    -- You can tweak here
     transparent = false,
     terminal_colors = true,
-  }
+  },
 })
 
 -- In your Neovim config
@@ -137,13 +133,14 @@ require("mason-lspconfig").setup({
 -- LSP setup
 local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
+local capabilities = cmp_nvim_lsp.default_capabilities()
 
 lspconfig.clangd.setup({
   cmd = {
     "clangd",
-    "--query-driver=" .. "C:/path/to/mingw64/bin/x86_64-w64-mingw32-g++.exe"
+    "--query-driver=" .. "C:/path/to/mingw64/bin/x86_64-w64-mingw32-g++.exe",
   },
-  capabilities = cmp_nvim_lsp.default_capabilities(),
+  capabilities = capabilities,
   on_attach = function(client, _)
     if client.server_capabilities.semanticTokensProvider then
       client.server_capabilities.semanticTokensProvider = nil
@@ -152,7 +149,7 @@ lspconfig.clangd.setup({
 })
 
 lspconfig.pyright.setup({
-  capabilities = cmp_nvim_lsp.default_capabilities(),
+  capabilities = capabilities,
   on_attach = function(client, _)
     if client.server_capabilities.semanticTokensProvider then
       client.server_capabilities.semanticTokensProvider = nil
@@ -160,7 +157,7 @@ lspconfig.pyright.setup({
   end,
 })
 
-lspconfig.html.setup {
+lspconfig.html.setup({
   cmd = { "vscode-html-language-server", "--stdio" },
   filetypes = { "html" },
   init_options = {
@@ -175,13 +172,13 @@ lspconfig.html.setup {
     html = {
       format = {
         wrapLineLength = 140,
-        /* other format settings if you like */
-      }
-    }
+        -- other format settings if you like
+      },
+    },
   },
   capabilities = capabilities,
   single_file_support = true,
-}
+})
 
 -- nvim-cmp setup
 local cmp = require("cmp")
@@ -207,35 +204,30 @@ npairs.add_rules({
     :with_pair(function(opts)
       local before_char = opts.line:sub(opts.col - 1, opts.col - 1)
       return before_char ~= " "
-    end)
+    end),
 })
 
 -- Diagnostics
 vim.diagnostic.config({
-  virtual_text = { prefix = '✗', source = 'always', severity = vim.diagnostic.severity.ERROR },
+  virtual_text = { prefix = "✗", source = "always", severity = vim.diagnostic.severity.ERROR },
   signs = true,
   underline = true,
   update_in_insert = true,
   severity_sort = true,
 })
 
-
-
 -- Auto format on save for non-clangd LSPs
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {"*.cpp","*.h","*.c","*.lua","*.py","*.js","*.java","*.html","*.xml","*.asm"},
+  pattern = { "*.cpp", "*.h", "*.c", "*.lua", "*.py", "*.js", "*.java", "*.html", "*.xml", "*.asm" },
   callback = function()
     vim.lsp.buf.format({
       async = false,
       filter = function(client)
         return client.name ~= "clangd"
-      end
+      end,
     })
-  end
+  end,
 })
-
-
-
 
 -- Helper function to check if a change is significant
 local function is_significant_change()
@@ -256,10 +248,8 @@ local function is_significant_change()
   return true
 end
 
-
-
---Disable Tree-sitter for significant changes (required for smooth to line)
-vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI"}, {
+-- Disable Tree-sitter for significant changes (required for smooth typing)
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
   callback = function()
     if is_significant_change() then
       pcall(vim.treesitter.stop, 0)
@@ -275,21 +265,9 @@ vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "BufWritePost" }, {
     end)
   end,
 })
+
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function()
     pcall(vim.treesitter.start, 0)
   end,
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
