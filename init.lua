@@ -30,7 +30,8 @@ vim.o.wrap = false
 -- setup plugins
 require("lazy").setup({
   -- LSP & completion
-  { "williamboman/mason-lspconfig.nvim" },
+  { "williamboman/mason.nvim",          lazy = false }, -- load first
+  { "williamboman/mason-lspconfig.nvim", lazy = false }, -- depends on mason.nvim
   { "neovim/nvim-lspconfig" },
   { "hrsh7th/nvim-cmp" },
   { "hrsh7th/cmp-nvim-lsp" },
@@ -271,4 +272,5 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
