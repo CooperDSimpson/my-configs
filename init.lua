@@ -31,6 +31,7 @@ vim.o.wrap = false
 -- setup plugins
 require("lazy").setup({
   -- LSP & completion
+  { "williamboman/mason.nvim" },
   { "neovim/nvim-lspconfig" },
   { "hrsh7th/nvim-cmp" },
   { "hrsh7th/cmp-nvim-lsp" },
@@ -38,6 +39,7 @@ require("lazy").setup({
   { "hrsh7th/cmp-path" },
   { "saadparwaiz1/cmp_luasnip" },
   { "l3mon4d3/luasnip" },
+  {}
 
   -- UI & utilities
   { "nvim-lualine/lualine.nvim" },
@@ -128,8 +130,10 @@ require("github-theme").setup({
   }
 })
 
-
-
+-- In your Neovim config
+require("mason-lspconfig").setup {
+  ensure_installed = { "html" }, -- auto-install HTML LSP
+}
 
 -- LSP setup
 local lspconfig = require("lspconfig")
@@ -277,6 +281,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     pcall(vim.treesitter.start, 0)
   end,
 })
+
 
 
 
