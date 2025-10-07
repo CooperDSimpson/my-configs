@@ -60,6 +60,12 @@ if not exist "%LAZY_DIR%" (
     echo Lazy.nvim already installed.
 )
 
+echo installing choco
+Set-ExecutionPolicy Bypass -Scope Process -Force; `
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+
 REM fallthrough to Neovim config update
 goto do_nvim_update
 
@@ -208,5 +214,6 @@ goto end
 :end
 echo done.
 exit /b 0
+
 
 
