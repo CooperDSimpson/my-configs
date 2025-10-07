@@ -158,23 +158,11 @@ echo MSYS2 environment setup complete!
 rem Setting environment variables for MinGW 64-bit
 echo Setting environment variables...
 
-setx CXX g++
-setx CC gcc
-setx C_INCLUDE_PATH "C:\msys64\mingw64\include"
-setx CPLUS_INCLUDE_PATH "C:\msys64\mingw64\include"
-setx LIBRARY_PATH "C:\msys64\mingw64\lib"
-
 rem Append MinGW64 bin to PATH if not already present
 echo Adding MinGW64 bin to user PATH...
 set MINGW64_BIN=C:\msys64\mingw64\bin
 for /f "tokens=*" %%i in ('powershell -NoProfile -Command "[Environment]::GetEnvironmentVariable('Path', 'User')"') do set "USER_PATH=%%i"
 
-echo %USER_PATH% | findstr /I /C:"%MINGW64_BIN%" >nul
-if errorlevel 1 (
-    setx PATH "%USER_PATH%;%MINGW64_BIN%"
-) else (
-    echo MinGW64 bin already in PATH.
-)
 
 echo environment variables set!
 
@@ -215,6 +203,7 @@ goto end
 :end
 echo done.
 exit /b 0
+
 
 
 
