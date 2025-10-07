@@ -135,7 +135,7 @@ echo Installing mingw64 toolchain and clang...
 
 rem Optional: Install other common mingw64 packages
 echo Installing extra mingw64 packages...
-"%MSYS2_BASH%" -lc "pacman -S --needed --noconfirm mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-python"
+"%MSYS2_BASH%" -lc "pacman -S --needed --noconfirm mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-python mingw-w64-x86_64-glfw"
 
 echo MSYS2 environment setup complete!
 
@@ -176,3 +176,4 @@ goto end
 :end
 echo done.
 exit /b 0
+
