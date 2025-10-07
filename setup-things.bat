@@ -51,6 +51,15 @@ winget install NASM.NASM  --accept-package-agreements --accept-source-agreements
 echo installing nvim
 winget install nvim --accept-package-agreements --accept-source-agreements 
 
+REM Clone Lazy.nvim if it doesn't exist
+set LAZY_DIR=%LOCALAPPDATA%\nvim-data\site\pack\lazy\start\lazy.nvim
+if not exist "%LAZY_DIR%" (
+    echo Cloning Lazy.nvim plugin manager...
+    git clone https://github.com/folke/lazy.nvim "%LAZY_DIR%"
+) else (
+    echo Lazy.nvim already installed.
+)
+
 REM fallthrough to Neovim config update
 goto do_nvim_update
 
@@ -139,6 +148,29 @@ echo Installing extra mingw64 packages...
 
 echo MSYS2 environment setup complete!
 
+rem Setting environment variables for MinGW 64-bit
+echo Setting environment variables...
+
+setx CXX g++
+setx CC gcc
+setx C_INCLUDE_PATH "C:\msys64\mingw64\include"
+setx CPLUS_INCLUDE_PATH "C:\msys64\mingw64\include"
+setx LIBRARY_PATH "C:\msys64\mingw64\lib"
+
+rem Append MinGW64 bin to PATH if not already present
+echo Adding MinGW64 bin to user PATH...
+set MINGW64_BIN=C:\msys64\mingw64\bin
+for /f "tokens=*" %%i in ('powershell -NoProfile -Command "[Environment]::GetEnvironmentVariable('Path', 'User')"') do set "USER_PATH=%%i"
+
+echo %USER_PATH% | findstr /I /C:"%MINGW64_BIN%" >nul
+if errorlevel 1 (
+    setx PATH "%USER_PATH%;%MINGW64_BIN%"
+) else (
+    echo MinGW64 bin already in PATH.
+)
+
+echo environment variables set!
+
 goto end
 
 
@@ -176,4 +208,5 @@ goto end
 :end
 echo done.
 exit /b 0
+
 
