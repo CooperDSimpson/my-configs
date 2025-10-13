@@ -19,7 +19,6 @@ vim.opt.softtabstop = 4
 vim.opt.expandtab = true
 vim.opt.number = true
 vim.opt.termguicolors = true
-vim.opt.background = "dark"
 vim.opt.guifont = "JetBrainsMono Nerd Font:h10"
 vim.opt.signcolumn = "auto"
 vim.opt.numberwidth = 1
@@ -52,8 +51,6 @@ require("lazy").setup({
   { "ThePrimeagen/harpoon" },
   { "lukas-reineke/indent-blankline.nvim" },
 
-  -- File explorer / commenting
-  { "terrortylor/nvim-comment" },
 
   -- Fuzzy finder
   {
@@ -62,20 +59,28 @@ require("lazy").setup({
   },
 
   -- Theme & syntax
-  {
-    "projekt0n/github-nvim-theme",
-    lazy = false, -- load immediately so the colorscheme is available
-    priority = 1000, -- make sure it loads before other UI plugins
-    config = function()
-      require("github-theme").setup({
-        options = {
-          transparent = false,
-          terminal_colors = true,
-        },
-      })
-      vim.cmd("colorscheme github_dark_high_contrast")
-    end,
-  },
+    
+{
+  "EdenEast/nightfox.nvim",
+  lazy = false,  -- load immediately so colorscheme applies early
+  config = function()
+    -- Set carbonfox variant
+    require("nightfox").setup({
+
+      options = {
+        variant = "carbonfox", -- select carbonfox variant
+      }
+    })
+    vim.cmd("colorscheme carbonfox")
+
+
+
+  end,
+},
+
+
+
+
 
   -- Autopairs
   {
@@ -105,7 +110,11 @@ require("lazy").setup({
 })
 
 -- lualine setup
-require("lualine").setup({
+
+-- Function to create a transparent Lualine theme based on your current colorscheme
+
+
+require('lualine').setup({
   sections = {
     lualine_c = {
       "filename",
@@ -117,19 +126,13 @@ require("lualine").setup({
   },
 })
 
-require("ibl").setup({})
 
-require("github-theme").setup({
-  options = {
-    transparent = false,
-    terminal_colors = true,
-  },
-})
+require("ibl").setup({})
 
 -- In your Neovim config
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "html" , "pyright" , }, -- auto-install HTML LSP
+  ensure_installed = { "html" , "pyright" , "clangd"}, -- auto-install HTML LSP
 })
 
 -- LSP setup
@@ -137,7 +140,8 @@ local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
 local capabilities = cmp_nvim_lsp.default_capabilities()
 
-lspconfig.clangd.setup({
+vim.lsp.start({
+  name = "clangd",
   cmd = {
     "clangd",
     "--query-driver=" .. "C:/path/to/mingw64/bin/x86_64-w64-mingw32-g++.exe",
@@ -150,16 +154,16 @@ lspconfig.clangd.setup({
   end,
 })
 
-lspconfig.pyright.setup({
+vim.lsp.start({
+  name = "pyright",
+  cmd = { "pyright-langserver", "--stdio" },
+  root_dir = vim.fs.dirname(vim.fs.find({ "pyproject.toml", "setup.py", ".git" }, { upward = true })[1]),
   capabilities = capabilities,
-  on_attach = function(client, _)
-    if client.server_capabilities.semanticTokensProvider then
-      client.server_capabilities.semanticTokensProvider = nil
-    end
-  end,
+  on_attach = on_attach,
 })
 
-lspconfig.html.setup({
+vim.lsp.start({
+  name = "html",
   cmd = { "vscode-html-language-server", "--stdio" },
   filetypes = { "html" },
   init_options = {
@@ -174,12 +178,17 @@ lspconfig.html.setup({
     html = {
       format = {
         wrapLineLength = 140,
-        -- other format settings if you like
+        -- Add other formatting options here if needed
       },
     },
   },
-  capabilities = capabilities,
+  capabilities = require("cmp_nvim_lsp").default_capabilities(),
   single_file_support = true,
+  on_attach = function(client, _)
+    if client.server_capabilities.semanticTokensProvider then
+      client.server_capabilities.semanticTokensProvider = nil
+    end
+  end,
 })
 
 -- nvim-cmp setup
@@ -274,8 +283,29 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
+-- Example for catppuccin
 
+--vim.cmd('highlight Normal guibg=none ctermbg=none')
+--vim.cmd('highlight NonText guibg=none')
 
+vim.cmd [[
+  highlight Normal guibg=NONE ctermbg=NONE
+  highlight LineNr guibg=NONE ctermbg=NONE
+  highlight CursorLineNr guibg=NONE ctermbg=NONE
+  highlight SignColumn guibg=NONE ctermbg=NONE
+  highlight NonText guibg=NONE ctermbg=NONE
+]]
 
+-- Override variable colors
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    vim.api.nvim_set_hl(0, "Identifier", { fg = "#7aa2f7" })
+    vim.api.nvim_set_hl(0, "Variable", { fg = "#7aa2f7" })
+    vim.api.nvim_set_hl(0, "TSVariable", { fg = "#7aa2f7" })
+    vim.api.nvim_set_hl(0, "TSVariableBuiltin", { fg = "#7aa2f7" })
+  end,
+})
 
 
