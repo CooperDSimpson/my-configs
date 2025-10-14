@@ -11,8 +11,8 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-
 -- general settings
+
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
@@ -60,24 +60,7 @@ require("lazy").setup({
 
   -- Theme & syntax
     
-{
-  "EdenEast/nightfox.nvim",
-  lazy = false,  -- load immediately so colorscheme applies early
-  config = function()
-    -- Set carbonfox variant
-    require("nightfox").setup({
-
-      options = {
-        variant = "carbonfox", -- select carbonfox variant
-      }
-    })
-    vim.cmd("colorscheme carbonfox")
-
-
-
-  end,
-},
-
+{"tiagovla/tokyodark.nvim"},
 
 
 
@@ -283,29 +266,25 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
--- Example for catppuccin
 
 --vim.cmd('highlight Normal guibg=none ctermbg=none')
 --vim.cmd('highlight NonText guibg=none')
 
-vim.cmd [[
-  highlight Normal guibg=NONE ctermbg=NONE
-  highlight LineNr guibg=NONE ctermbg=NONE
-  highlight CursorLineNr guibg=NONE ctermbg=NONE
-  highlight SignColumn guibg=NONE ctermbg=NONE
-  highlight NonText guibg=NONE ctermbg=NONE
-]]
+vim.cmd.colorscheme("tokyodark") 
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
+vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
 
--- Override variable colors
+-- Set recognized variables to light gray
 
-vim.api.nvim_create_autocmd("ColorScheme", {
-  pattern = "*",
-  callback = function()
-    vim.api.nvim_set_hl(0, "Identifier", { fg = "#7aa2f7" })
-    vim.api.nvim_set_hl(0, "Variable", { fg = "#7aa2f7" })
-    vim.api.nvim_set_hl(0, "TSVariable", { fg = "#7aa2f7" })
-    vim.api.nvim_set_hl(0, "TSVariableBuiltin", { fg = "#7aa2f7" })
-  end,
-})
+-- Keep normal text default or whatever you prefer
+
+-- Set recognized variables (Tree-sitter + LSP) to light gray
+vim.api.nvim_set_hl(0, "@variable", { fg = "#aaaaaa" })
+vim.api.nvim_set_hl(0, "@lsp.type.variable", { fg = "#aaaaaa" })
 
 
